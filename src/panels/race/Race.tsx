@@ -1,4 +1,4 @@
-import { useParams, useRouter } from '@happysanta/router'
+import { PAGE_MAIN, useParams, useRouter } from '@happysanta/router'
 import React, { useContext, useEffect, useMemo } from 'react'
 import { Button, InfoRow, Panel, PanelHeader, PanelHeaderBack, Title } from '@vkontakte/vkui'
 import { Icon28ShareExternalOutline } from '@vkontakte/icons'
@@ -15,23 +15,15 @@ interface IRunsProps {
 export const Race: React.FC<IRunsProps> = (props) =>  {
     const router = useRouter()
     const { id, action } = useParams()
-    const actions = useMemo(() => action ? action.split(',') : [], [action])
     const { glApi, mapInstance } = useContext(MapContext)
     const { setActiveModal } = useContext(ModalContext)
-    const races = useAppSelector((state) => state.races.races)
 
+    const races = useAppSelector((state) => state.races.races)
+    const actions = useMemo(() => action ? action.split(',') : [], [action])
     const activeRace = races.find(({ id: activityId }) => activityId === id)
 
     useEffect(() => {
-        if (actions.includes('showShareModal')) {
-            requestAnimationFrame(() => {
-                setActiveModal(MODAL_CARD_SHARE_RACE)
-            })
-        }
-    })
-
-    useEffect(() => {
-        if (!glApi || !mapInstance || !activeRace.path.length) {
+        if (!glApi || !mapInstance || activeRace.path.length < 1) {
             return
         }
 
@@ -70,14 +62,13 @@ export const Race: React.FC<IRunsProps> = (props) =>  {
             endMarker.destroy()
             startMarker.destroy()
         }
-    }, [activeRace, mapInstance, glApi, actions, setActiveModal])
+    }, [activeRace, mapInstance, glApi])
 
     return (
         <Panel id={props.id}>
-            <PanelHeader left={<PanelHeaderBack label="Назад" onClick={() => router.popPage()}/>}>
+            <PanelHeader left={<PanelHeaderBack label='Назад' onClick={() => router.pushPage(PAGE_MAIN)}/>}>
                 Пробежка { id }
             </PanelHeader>
-            <PanelHeader left={<PanelHeaderBack label='Назад' onClick={() => router.popPage()}/>}/>
             <div className='map_container'>
                 <Map/>
             </div>

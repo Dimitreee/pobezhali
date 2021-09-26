@@ -7,7 +7,7 @@ import { formatDistance, formatDuration } from '../../utils/common'
 import './CanvasPoster.css'
 
 interface ICanvasPoster {
-    race: {
+    race?: {
         distance: number,
         duration: {
             seconds: number,
@@ -39,7 +39,13 @@ export const CanvasPoster: React.FC<ICanvasPoster> = (props) => {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const platform = usePlatform();
 
+    const { race, onBlobGenerated } = props
+
     useEffect(() => {
+        if (!race) {
+            return
+        }
+
         if (canvasRef) {
             const canvasContext = canvasRef.current.getContext('2d')
             canvasContext.font = 'bold 20px monospace';
@@ -48,7 +54,7 @@ export const CanvasPoster: React.FC<ICanvasPoster> = (props) => {
                 canvasContext.fillStyle = 'white';
                 canvasContext.strokeStyle = 'black';
 
-                const infoMessage = `${formatDistance(props.race.distance)} km for ${formatDuration(props.race.duration)}`
+                const infoMessage = `${formatDistance(race.distance)} km for ${formatDuration(race.duration)}`
                 const motivationMessage = 'Run with me'
 
                 canvasContext.fillText(infoMessage, 20, 200);
@@ -72,8 +78,8 @@ export const CanvasPoster: React.FC<ICanvasPoster> = (props) => {
 
                 const poster = canvasRef.current.toDataURL('image/png')
 
-                if (props.onBlobGenerated) {
-                    props.onBlobGenerated(poster)
+                if (onBlobGenerated) {
+                    onBlobGenerated(poster)
                 }
             } else {
                 // На Ios Есть некоторые проблемы с обработкой события onLoad у Image в продакшн сборке,
@@ -88,13 +94,13 @@ export const CanvasPoster: React.FC<ICanvasPoster> = (props) => {
 
                     const poster = canvasRef.current.toDataURL('image/png')
 
-                    if (props.onBlobGenerated) {
-                        props.onBlobGenerated(poster)
+                    if (onBlobGenerated) {
+                        onBlobGenerated(poster)
                     }
                 }
             }
         }
-    }, [canvasRef])
+    }, [canvasRef, race, onBlobGenerated])
 
     return (
         <canvas ref={canvasRef} className='canvas_poster' width='400' height='800'/>

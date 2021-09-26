@@ -23,7 +23,6 @@ export const Races: React.FC<IRunsProps> = (props) =>  {
 
     const racesById = races
         .filter((race) => {
-            console.log(race.userId, userId)
             return Number(race.userId) === Number(userId)
         })
         .sort((leftRace, rightRace) => leftRace.date < rightRace.date ? 1 : -1)

@@ -75,10 +75,6 @@ export const ActiveRace: React.FC<IRunsProps> = (props) =>  {
     }, [mapInstance, glApi])
 
     useEffect(() => {
-        if (!activeRace.path.length) {
-            return
-        }
-
         if (!glApi || !mapInstance || !activeRace.path.length) {
             return
         }
@@ -120,7 +116,7 @@ export const ActiveRace: React.FC<IRunsProps> = (props) =>  {
                 endMarker.current = null
             }
         }
-    }, [activeRace.path])
+    }, [mapInstance, glApi, activeRace.path])
 
     useEffect(() => {
         // TODO: Инкрементить дистанцию при добавлении одной точки в путь
