@@ -35,7 +35,7 @@ export const ShareRaceModal: React.FC<IShareRaceModal> = (props) => {
             ]}
         >
             <Headline weight="regular" style={{ marginBottom: 16 }}>Ваши успехи могут мотивировать ваших близких</Headline>
-            <CanvasPoster race={currentRace} onBlobGenerated={(blob) => setBlob(blob)}/>
+            <CanvasPoster race={currentRace} onBlobGenerated={setBlob}/>
         </ModalCard>
     )
 }
