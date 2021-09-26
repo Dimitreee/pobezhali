@@ -48,7 +48,7 @@ export const Map = () => {
                     zoomControl: false,
                     center: positon,
                     zoom: 16,
-                    key: 'bfd8bbca-8abf-11ea-b033-5fa57aae2de7',
+                    key: process.env.REACT_APP_MAPS_ACCESS_TOKEN
                 });
 
                 setMapInstance(map)

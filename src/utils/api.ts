@@ -1,6 +1,6 @@
 import bridge from '@vkontakte/vk-bridge'
 
-const APP_ID = 7959189
+const APP_ID = Number(process.env.REACT_APP_ID)
 
 export const getAuthToken = () => bridge.send(
     'VKWebAppGetAuthToken',
