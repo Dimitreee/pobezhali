@@ -39,7 +39,7 @@ const App = () => {
 		}
 
 		initApp();
-	}, [dispatch]);
+	}, []);
 
 	return (
 		<AdaptivityProvider>
@@ -51,10 +51,10 @@ const App = () => {
 					modal={modalElement}
 				>
 					<Home id={PANEL_MAIN}/>
+					<Friends id={PANEL_FRIENDS}/>
 					<Races id={PANEL_RACES}/>
 					<Race id={PANEL_RACE}/>
 					<ActiveRace id={PANEL_ACTIVE_RACE}/>
-					<Friends id={PANEL_FRIENDS}/>
 				</View>
 			</AppRoot>
 		</AdaptivityProvider>

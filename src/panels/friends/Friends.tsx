@@ -7,6 +7,7 @@ import { setIsLoading } from '../../features/user/userSlice'
 
 import { useAppSelector } from '../../features/store'
 import { PAGE_RACES } from '../../routes'
+import { getUsersList } from '../../utils/api'
 
 interface IRunsProps {
     id: string
@@ -24,16 +25,7 @@ export const Friends: React.FC<IRunsProps> = (props) =>  {
         dispatch(setIsLoading(true))
 
         async function fetchData() {
-            const { response } = await bridge.send("VKWebAppCallAPIMethod", {
-                "method": "friends.get",
-                "request_id": "32test",
-                "params": {
-                    "fields": "nickname,photo_200",
-                    "user_ids": "1",
-                    "v":"5.131",
-                    "access_token": accessToken
-                }
-            });
+            const { response } = await getUsersList(accessToken)
 
             setFetchedUsers(response.items);
             dispatch(setIsLoading(false))
