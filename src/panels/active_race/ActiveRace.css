@@ -1,0 +1,33 @@
+.button_container {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    z-index: 1;
+    transform: translate(-50%);
+    text-align: center;
+    width: 100%;
+}
+
+.clock_container {
+    padding-bottom: 14px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.map_container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    height: 100%;
+}
+
+.controls_container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}

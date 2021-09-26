@@ -1,17 +1,32 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import { RouterContext } from '@happysanta/router'
+import React from "react"
+import ReactDOM from "react-dom"
+import bridge from "@vkontakte/vk-bridge"
+import { Provider as ReduxProvider } from 'react-redux'
+import { store } from './features/store'
+import App from "./App";
+import { MapProvider } from './components/Map/Map'
+import { ModalContextProvider } from './components/Modal/ModalContext'
+import { router } from './routes'
+
+
+bridge.send("VKWebAppInit");
+
+router.start()
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+    <ReduxProvider store={store}>
+        <RouterContext.Provider value={router}>
+            <MapProvider>
+                <ModalContextProvider>
+                    <App />
+                </ModalContextProvider>
+            </MapProvider>
+        </RouterContext.Provider>
+    </ReduxProvider>,
+    document.getElementById("root")
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+if (process.env.NODE_ENV === "development") {
+    import("./eruda").then(({ default: eruda }) => {}); //runtime download
+}

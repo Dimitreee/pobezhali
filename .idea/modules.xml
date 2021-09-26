@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$USER_HOME$/Work/condo/.idea/condo.iml" filepath="$USER_HOME$/Work/condo/.idea/condo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../example/.idea/example.iml" filepath="$PROJECT_DIR$/../example/.idea/example.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/route_tracker_tsx.iml" filepath="$PROJECT_DIR$/.idea/route_tracker_tsx.iml" />
+    </modules>
+  </component>
+</project>
