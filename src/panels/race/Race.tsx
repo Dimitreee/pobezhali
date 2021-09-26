@@ -24,9 +24,13 @@ export const Race: React.FC<IRunsProps> = (props) =>  {
 
     useEffect(() => {
         if (actions.includes('showShareModal')) {
-            setActiveModal(MODAL_CARD_SHARE_RACE)
+            requestAnimationFrame(() => {
+                setActiveModal(MODAL_CARD_SHARE_RACE)
+            })
         }
+    })
 
+    useEffect(() => {
         if (!glApi || !mapInstance || !activeRace.path.length) {
             return
         }
