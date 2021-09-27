@@ -37,8 +37,8 @@
 ```
 1) yarn
 3) yarn add vk-tunnel
-4) Зарегать свое приложение в вк
-5) Заменить APP_ID в /src/utils/api.ts 
+4) Зарегать свое приложение в вк, получить APP_ID
+5) создать .env добавив нужные переменные окружения (смотри в .env.example)
 6) yarn dev
 7) в этой же директории  vk-tunnel --insecure=1 --http-protocol=https --ws-protocol=wss --host=localhost --port=10888
 8) Урл от vk-tunnel указать в настройках аппа
