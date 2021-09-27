@@ -1,7 +1,7 @@
 import { Page, PAGE_MAIN, PANEL_MAIN, Router, VIEW_MAIN } from '@happysanta/router'
 
-export const PAGE_RACES = '/page_races/:userId([a-fA-F0-9]+)'
-export const PAGE_RACE = '/page_race/:id([a-fA-F0-9]+):action?'
+export const PAGE_RACES = '/page_races'
+export const PAGE_RACE = '/page_race'
 export const PAGE_ACTIVE_RACE = '/page_active_race'
 export const PAGE_FRIENDS = '/page_friends'
 
