@@ -1,8 +1,5 @@
-import { load } from '@2gis/mapgl';
-import * as mapgl from '@2gis/mapgl/types'
-import { Map as MapInterface } from '@2gis/mapgl/types'
 import { useEffect, useState, createContext, memo, Dispatch, useContext } from 'react'
-import { useGeoTracker } from '../../hooks/useGeoTracker'
+import { MapController } from './MapController'
 
 const MapWrapper = memo(
     () => {
@@ -12,52 +9,35 @@ const MapWrapper = memo(
 );
 
 interface IMapContext {
-    mapInstance?: MapInterface,
-    setMapInstance?: Dispatch<MapInterface>
-    glApi?: typeof mapgl
-    setGlApi?: Dispatch<typeof mapgl>
+    mapController?: MapController,
+    setMapController?: Dispatch<MapController | null>
 }
 
 export const MapContext = createContext<IMapContext>({});
 
 export const MapProvider = (props) => {
-    const [mapInstance, setMapInstance] = useState<MapInterface | null>(null);
-    const [glApi, setGlApi] = useState<typeof mapgl | null>(null);
+    const [mapController, setMapController] = useState<MapController| null>(null);
 
     return (
-        <MapContext.Provider value={{ mapInstance, setMapInstance, glApi, setGlApi }}>
+        <MapContext.Provider value={{ mapController, setMapController }}>
             {props.children}
         </MapContext.Provider>
     );
 };
 
 export const Map = () => {
-    const { setMapInstance, setGlApi } = useContext(MapContext);
-    const { getCurrentPosition } = useGeoTracker()
+    const { setMapController, mapController } = useContext(MapContext);
 
     useEffect(() => {
-        let map;
-
-        load().then((mapglAPI) => {
-            setGlApi(mapglAPI)
-
-            getCurrentPosition().then(({ coords }) => {
-                const positon = [coords.longitude, coords.latitude]
-
-                map = new mapglAPI.Map('map-container', {
-                    zoomControl: false,
-                    center: positon,
-                    zoom: 16,
-                    key: process.env.REACT_APP_MAPS_ACCESS_TOKEN
-                });
-
-                setMapInstance(map)
-            })
-
-        });
+        const controller = new MapController('map-container')
+        controller.init().then(() => {
+            setMapController(controller)
+        })
 
         return () => {
-            map && map.destroy();
+            if (mapController) {
+                mapController.destroy()
+            }
         };
     }, []);
 

@@ -1,5 +1,5 @@
 import { PAGE_MAIN, useParams, useRouter } from '@happysanta/router'
-import React, { useContext, useEffect, useMemo } from 'react'
+import React, { useContext, useEffect, useMemo, useRef } from 'react'
 import { Button, InfoRow, Panel, PanelHeader, PanelHeaderBack, Title } from '@vkontakte/vkui'
 import { Icon28ShareExternalOutline } from '@vkontakte/icons'
 
@@ -15,54 +15,45 @@ interface IRunsProps {
 export const Race: React.FC<IRunsProps> = (props) =>  {
     const router = useRouter()
     const { id, action } = useParams()
-    const { glApi, mapInstance } = useContext(MapContext)
+    const { mapController } = useContext(MapContext)
     const { setActiveModal } = useContext(ModalContext)
 
     const races = useAppSelector((state) => state.races.races)
-    const actions = useMemo(() => action ? action.split(',') : [], [action])
     const activeRace = races.find(({ id: activityId }) => activityId === id)
 
+    const polyline = useRef(null)
+    const endMarker = useRef(null)
+    const startMarker = useRef(null)
+
     useEffect(() => {
-        if (!glApi || !mapInstance || activeRace.path.length < 1) {
+        if (!mapController || !activeRace || activeRace.path.length < 1) {
             return
         }
 
-        mapInstance.setCenter(activeRace.path[0])
-
-        const polyline = new glApi.Polyline(mapInstance, {
-            coordinates: activeRace.path,
-            color: "#d02525",
-            width: 10,
-            zIndex: 200,
-        });
-
-        const endMarker = new glApi.CircleMarker(mapInstance, {
-            coordinates: activeRace.path[activeRace.path.length - 1],
-            radius: 14,
-            color: "#d02525",
-            strokeWidth: 4,
-            strokeColor: '#ffffff',
-            stroke2Width: 6,
-            stroke2Color: '#0088ff55',
-            zIndex:20,
-        })
-
-        const startMarker = new glApi.CircleMarker(mapInstance, {
-            coordinates: activeRace.path[0],
-            radius: 14,
-            color: '#0088ff',
-            strokeWidth: 4,
-            strokeColor: '#ffffff',
-            stroke2Width: 6,
-            stroke2Color: '#0088ff55',
-        });
+        mapController.mapInstance.setCenter(activeRace.path[0])
+        startMarker.current = mapController.drawStartPosition(activeRace.path[0])
+        endMarker.current = mapController.drawEndPosition(activeRace.path[activeRace.path.length - 1])
+        polyline.current = mapController.drawPolyline(activeRace.path)
 
         return () => {
-            polyline.destroy()
-            endMarker.destroy()
-            startMarker.destroy()
+            if (polyline.current) {
+                polyline.current.destroy()
+                polyline.current = null
+            }
+
+            if (endMarker.current) {
+                endMarker.current.destroy()
+                endMarker.current = null
+            }
+
+            if (startMarker.current) {
+                startMarker.current.destroy()
+                startMarker.current = null
+            }
         }
-    }, [activeRace, mapInstance, glApi])
+    }, [mapController, activeRace])
+
+    const actions = useMemo(() => action ? action.split(',') : [], [action])
 
     return (
         <Panel id={props.id}>

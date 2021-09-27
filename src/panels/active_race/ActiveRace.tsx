@@ -28,7 +28,7 @@ const SECONDS_PER_HOUR = 3600
 export const ActiveRace: React.FC<IRunsProps> = (props) =>  {
     const router = useRouter()
     const { pollCurrentPosition, isPolling, stopPolling, getCurrentPosition } = useGeoTracker()
-    const { glApi, mapInstance } = useContext(MapContext)
+    const { mapController } = useContext(MapContext)
     const { setActiveModal } = useContext(ModalContext)
 
     const dispatch = useDispatch()
@@ -48,34 +48,27 @@ export const ActiveRace: React.FC<IRunsProps> = (props) =>  {
     const startMarker = useRef(null)
 
     useEffect(() => {
-        if (!glApi || !mapInstance) {
+        if (!mapController) {
             return
         }
 
         getCurrentPosition().then(({ coords }) => {
-            const position = [coords.longitude, coords.latitude]
+            const startPosition = [coords.longitude, coords.latitude]
 
-            startMarker.current = new glApi.CircleMarker(mapInstance, {
-                coordinates: position,
-                radius: 14,
-                color: '#0088ff',
-                strokeWidth: 4,
-                strokeColor: '#ffffff',
-                stroke2Width: 6,
-                stroke2Color: '#0088ff55',
-            });
+            mapController.mapInstance.setCenter(startPosition)
+            startMarker.current = mapController.drawStartPosition(startPosition)
         })
 
         return () => {
-            if (startMarker.current !== null) {
+            if (startMarker.current) {
                 startMarker.current.destroy()
                 startMarker.current = null
             }
         }
-    }, [mapInstance, glApi])
+    }, [mapController])
 
     useEffect(() => {
-        if (!glApi || !mapInstance || !activeRace.path.length) {
+        if (!mapController || !activeRace.path.length) {
             return
         }
 
@@ -83,30 +76,16 @@ export const ActiveRace: React.FC<IRunsProps> = (props) =>  {
             polyline.current.destroy()
         }
 
-        polyline.current = new glApi.Polyline(mapInstance, {
-            coordinates: activeRace.path,
-            color: "#d02525",
-            width: 10,
-            zIndex: 200,
-        });
+        polyline.current = mapController.drawPolyline(activeRace.path)
 
         if (endMarker.current) {
             endMarker.current.destroy()
         }
 
-        endMarker.current = new glApi.CircleMarker(mapInstance, {
-            coordinates: activeRace.path[activeRace.path.length - 1],
-            radius: 14,
-            color: "#d02525",
-            strokeWidth: 4,
-            strokeColor: '#ffffff',
-            stroke2Width: 6,
-            stroke2Color: '#0088ff55',
-            zIndex:20,
-        })
+        endMarker.current = mapController.drawEndPosition(activeRace.path[activeRace.path.length - 1])
 
         return () => {
-            if (polyline.current !== null) {
+            if (polyline.current) {
                 polyline.current.destroy()
                 polyline.current = null
             }
@@ -116,7 +95,7 @@ export const ActiveRace: React.FC<IRunsProps> = (props) =>  {
                 endMarker.current = null
             }
         }
-    }, [mapInstance, glApi, activeRace.path])
+    }, [activeRace.path])
 
     useEffect(() => {
         // TODO: Инкрементить дистанцию при добавлении одной точки в путь
