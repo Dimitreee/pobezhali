@@ -21,14 +21,6 @@ export const getUsersList = (accessToken) => bridge.send('VKWebAppCallAPIMethod'
     }
 });
 
-export const getAccessToke = () => bridge.send(
-    'VKWebAppGetAuthToken',
-    {
-        'app_id': APP_ID,
-        'scope': 'friends,photo,wall'
-    }
-);
-
 export const getUserInfo = () => bridge.send('VKWebAppGetUserInfo');
 
 export const shareRunInfo = (blob) => bridge.send('VKWebAppShowStoryBox', {
