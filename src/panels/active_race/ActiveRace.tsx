@@ -59,7 +59,6 @@ export const ActiveRace: React.FC<IRunsProps> = (props) =>  {
 
             mapController.mapInstance.setCenter(position)
             startMarker.current = mapController.drawStartPosition(position)
-            dispatch(updateRacePath(position))
         })
 
         return () => {
