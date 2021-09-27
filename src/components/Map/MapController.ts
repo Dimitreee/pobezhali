@@ -37,7 +37,7 @@ export class MapController {
     }
 
     public drawPolyline(path: Path) {
-        if (!this.mapInstance || this.glApi) {
+        if (!this.mapInstance || !this.glApi) {
             return
         }
 
@@ -68,7 +68,7 @@ export class MapController {
 
     private startMarkerConfig = {
         radius: 14,
-        color: "#d02525",
+        color: "#25d0d0",
         strokeWidth: 4,
         strokeColor: '#ffffff',
         stroke2Width: 6,
