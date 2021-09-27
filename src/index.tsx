@@ -4,6 +4,8 @@ import ReactDOM from 'react-dom'
 import App from "./App";
 import { router } from './routes'
 
+router.start()
+
 ReactDOM.render(
     <RouterContext.Provider value={router}>
         <App />

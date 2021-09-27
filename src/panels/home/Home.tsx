@@ -11,12 +11,6 @@ export const Home = ({ id }) => {
 
 	return (
 		<Panel id={id}>
-			<PanelHeader left={
-				<Button mode='secondary' onClick={() => router.pushPage(PAGE_FRIENDS)}>
-					<Icon24List/>
-				</Button>
-			}>
-			</PanelHeader>
 			<div className='button_container'>
 				<Title level='1' weight='semibold' style={{ marginBottom: 16 }}>Начать пробежку</Title>
 				<Button mode='secondary' onClick={() => router.pushPage(PAGE_ACTIVE_RACE)}>

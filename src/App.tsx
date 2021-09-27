@@ -19,8 +19,8 @@ const App = () => {
 					activePanel={location.getViewActivePanel(VIEW_MAIN)}
 				>
 					<Home id={PANEL_MAIN}/>
-					<ActiveRace id={PANEL_ACTIVE_RACE}/>
 					<Race id={PANEL_RACE}/>
+					<ActiveRace id={PANEL_ACTIVE_RACE}/>
 				</View>
 			</AppRoot>
 		</AdaptivityProvider>
