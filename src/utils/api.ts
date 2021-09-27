@@ -36,3 +36,4 @@ export const shareRunInfo = (blob) => bridge.send('VKWebAppShowStoryBox', {
     'blob': blob,
 });
 
+export const getGeoData = () => bridge.send("VKWebAppGetGeodata");

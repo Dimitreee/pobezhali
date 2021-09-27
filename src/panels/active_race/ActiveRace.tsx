@@ -52,11 +52,14 @@ export const ActiveRace: React.FC<IRunsProps> = (props) =>  {
             return
         }
 
-        getCurrentPosition().then(({ coords }) => {
-            const startPosition = [coords.longitude, coords.latitude]
+        getCurrentPosition().then((position) => {
+            if (!position) {
+                return
+            }
 
-            mapController.mapInstance.setCenter(startPosition)
-            startMarker.current = mapController.drawStartPosition(startPosition)
+            mapController.mapInstance.setCenter(position)
+            startMarker.current = mapController.drawStartPosition(position)
+            dispatch(updateRacePath(position))
         })
 
         return () => {
@@ -99,17 +102,19 @@ export const ActiveRace: React.FC<IRunsProps> = (props) =>  {
 
     useEffect(() => {
         // TODO: Инкрементить дистанцию при добавлении одной точки в путь
-        const distanceLength = getPathLength(activeRace.path);
-        dispatch(updateDistance(distanceLength))
+        dispatch(updateDistance(getPathLength(activeRace.path)))
     }, [activeRace.path])
 
     useEffect(() => {
-        const nextDuration = { seconds, minutes, hours }
-        dispatch(updateDuration(nextDuration))
+        dispatch(updateDuration({ seconds, minutes, hours }))
     }, [seconds, minutes, hours])
 
     const updatePath = (position) => {
-        dispatch(updateRacePath([position.coords.longitude, position.coords.latitude]))
+        if (!position) {
+            return
+        }
+
+        dispatch(updateRacePath(position))
     }
 
     const stopPositionPolling = () => {

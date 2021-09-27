@@ -1,9 +1,11 @@
 import { useRef, useState } from 'react'
+import { Position } from '../components/Map/MapController'
+import { getGeoData } from '../utils/api'
 
 interface IUserGeotrackerReturnType {
-    pollCurrentPosition: (handleUpdate: (position: GeolocationPosition) => void, poolInterval: number) => void
+    pollCurrentPosition: (handleUpdate: (position: Position) => void, poolInterval: number) => void
     stopPolling: () => void
-    getCurrentPosition: () => Promise<GeolocationPosition>
+    getCurrentPosition: () => Promise<Position | void>
     getGeoPermissions: (onSuccess: () => void, onFailure: () => void) => void
     isPolling: boolean
 }
@@ -32,18 +34,13 @@ export const useGeoTracker = (): IUserGeotrackerReturnType => {
         }
     }
 
-    const getCurrentPosition = (): Promise<GeolocationPosition> => {
-        return new Promise((resolve, rej) => {
-            if (!navigator.geolocation) {
-                rej()
-            } else {
-                navigator.geolocation.getCurrentPosition(
-
-                    (position) => {
-                        resolve(position)
-                    }, rej
-                );
+    const getCurrentPosition = (): Promise<Position | void> => {
+        return getGeoData().then(result => {
+            if (result.available) {
+                return [result.long, result.lat]
             }
+
+            return Promise.reject()
         })
     }
 
