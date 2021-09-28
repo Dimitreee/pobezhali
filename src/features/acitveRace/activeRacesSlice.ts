@@ -37,7 +37,6 @@ export const activeRaceSlice = createSlice({
     },
 })
 
-// Action creators are generated for each case reducer function
 export const { updateDistance, updateDuration, resetRace, updateRacePath } = activeRaceSlice.actions
 
 export default activeRaceSlice.reducer

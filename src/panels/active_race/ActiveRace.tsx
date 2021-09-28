@@ -1,6 +1,6 @@
 import { useRouter } from '@happysanta/router'
 import { Icon48Pause, Icon48Play } from '@vkontakte/icons'
-import React, { useContext, useEffect, useRef } from 'react'
+import React, { useCallback, useContext, useEffect, useRef } from 'react'
 import { Button, InfoRow, Panel, PanelHeader, PanelHeaderBack, Title } from '@vkontakte/vkui'
 import { Icon24Stop } from '@vkontakte/icons';
 
@@ -8,7 +8,7 @@ import './ActiveRace.css'
 import { useDispatch } from 'react-redux'
 import { useStopwatch } from 'react-timer-hook'
 import { Map, MapContext } from '../../components/Map/Map'
-import { updateRacePath, updateDistance, updateDuration } from '../../features/acitveRace/activeRacesSlice'
+import { updateRacePath, updateDistance, updateDuration, resetRace } from '../../features/acitveRace/activeRacesSlice'
 import {
     ModalContext,
     MODAL_CARD_END_RACE
@@ -33,7 +33,7 @@ export const ActiveRace: React.FC<IRunsProps> = (props) =>  {
 
     const dispatch = useDispatch()
 
-    const activeRace = useAppSelector((state) => state.activeRace)
+    const { path, distance, duration } = useAppSelector((state) => state.activeRace)
 
     const {
         seconds,
@@ -70,7 +70,7 @@ export const ActiveRace: React.FC<IRunsProps> = (props) =>  {
     }, [mapController])
 
     useEffect(() => {
-        if (!mapController || !activeRace.path.length) {
+        if (!mapController || !path.length || path.length < 1) {
             return
         }
 
@@ -78,13 +78,13 @@ export const ActiveRace: React.FC<IRunsProps> = (props) =>  {
             polyline.current.destroy()
         }
 
-        polyline.current = mapController.drawPolyline(activeRace.path)
+        polyline.current = mapController.drawPolyline(path)
 
         if (endMarker.current) {
             endMarker.current.destroy()
         }
 
-        endMarker.current = mapController.drawEndPosition(activeRace.path[activeRace.path.length - 1])
+        endMarker.current = mapController.drawEndPosition(path[path.length - 1])
 
         return () => {
             if (polyline.current) {
@@ -97,31 +97,41 @@ export const ActiveRace: React.FC<IRunsProps> = (props) =>  {
                 endMarker.current = null
             }
         }
-    }, [activeRace.path])
+    }, [mapController, path])
 
     useEffect(() => {
         // TODO: Инкрементить дистанцию при добавлении одной точки в путь
-        dispatch(updateDistance(getPathLength(activeRace.path)))
-    }, [activeRace.path])
+        dispatch(updateDistance(getPathLength(path)))
+    }, [path])
 
     useEffect(() => {
         dispatch(updateDuration({ seconds, minutes, hours }))
     }, [seconds, minutes, hours])
 
-    const updatePath = (position) => {
+    const updatePath = useCallback((position) => {
         if (!position) {
             return
         }
 
+        if (path.length > 1) {
+            const lastPoint = path[path.length - 1]
+
+            console.log(position[0] === lastPoint[0] && position[1] === lastPoint[1], position, lastPoint)
+
+            if (position[0] === lastPoint[0] && position[1] === lastPoint[1]) {
+                return
+            }
+        }
+
         dispatch(updateRacePath(position))
-    }
+    }, [path])
 
     const stopPositionPolling = () => {
         pauseTimer()
         stopPolling()
     }
 
-    const enablePositionPolling = () => {
+    const enablePositionPolling = useCallback(() => {
         if (isPolling) {
             stopPositionPolling()
             return
@@ -132,11 +142,14 @@ export const ActiveRace: React.FC<IRunsProps> = (props) =>  {
         reset(stopwatchOffset)
 
         pollCurrentPosition(updatePath, GEO_POLL_INTERVAL)
-    }
+    }, [reset, hours, minutes, seconds])
 
     return (
         <Panel id={props.id}>
-            <PanelHeader left={<PanelHeaderBack label='Назад' onClick={() => router.popPage()}/>}/>
+            <PanelHeader left={<PanelHeaderBack label='Назад' onClick={() => {
+                dispatch(resetRace())
+                router.popPage()
+            }}/>}/>
             <div className='map_container'>
                 <Map/>
             </div>
@@ -144,19 +157,19 @@ export const ActiveRace: React.FC<IRunsProps> = (props) =>  {
                 <div className='clock_container'>
                     <InfoRow header='Дистанция'>
                         <Title level='1' weight='medium'>
-                            {formatDistance(activeRace.distance)} км.
+                            {formatDistance(distance)} км.
                         </Title>
                     </InfoRow>
                     <InfoRow header='Время'>
                         <Title level='1' weight='medium'>
-                            {formatNumber(activeRace.duration.hours)}:{formatNumber(activeRace.duration.minutes)}:{formatNumber(activeRace.duration.seconds)}
+                            {formatNumber(duration.hours)}:{formatNumber(duration.minutes)}:{formatNumber(duration.seconds)}
                         </Title>
                     </InfoRow>
                 </div>
                 <div className='controls_container'>
                     <Button
-                        mode={!(activeRace.distance > 0) ? 'overlay_secondary' : 'secondary'}
-                        disabled={!(activeRace.distance > 0)}
+                        mode={!(distance > 0) ? 'overlay_secondary' : 'secondary'}
+                        disabled={!(distance > 0)}
                         onClick={() => {
                             stopPositionPolling()
                             setActiveModal(MODAL_CARD_END_RACE)
