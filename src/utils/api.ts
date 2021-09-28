@@ -28,17 +28,17 @@ export const shareRunInfo = (blob) => bridge.send('VKWebAppShowStoryBox', {
     'blob': blob,
 });
 
-// export const getGeoData = () => bridge.send("VKWebAppGetGeodata");
+export const getGeoData = () => bridge.send("VKWebAppGetGeodata");
 
 // использовать для локального тестирования
-export const getGeoData = () => {
-    function getRandomArbitrary(min, max) {
-        return Math.random() * (max - min) + min;
-    }
-
-    return Promise.resolve({
-        available: true,
-        long: getRandomArbitrary(50, 60),
-        lat: getRandomArbitrary(50, 60),
-    })
-}
+// export const getGeoData = () => {
+//     function getRandomArbitrary(min, max) {
+//         return Math.random() * (max - min) + min;
+//     }
+//
+//     return Promise.resolve({
+//         available: true,
+//         long: getRandomArbitrary(50, 60),
+//         lat: getRandomArbitrary(50, 60),
+//     })
+// }
