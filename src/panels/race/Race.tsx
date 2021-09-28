@@ -1,5 +1,5 @@
 import { PAGE_MAIN, useParams, useRouter } from '@happysanta/router'
-import React, { useContext, useEffect, useMemo, useRef } from 'react'
+import React, { useContext, useEffect, useMemo } from 'react'
 import { Button, InfoRow, Panel, PanelHeader, PanelHeaderBack, Title } from '@vkontakte/vkui'
 import { Icon28ShareExternalOutline } from '@vkontakte/icons'
 
@@ -19,39 +19,18 @@ export const Race: React.FC<IRunsProps> = (props) =>  {
     const { setActiveModal } = useContext(ModalContext)
 
     const races = useAppSelector((state) => state.races.races)
-    const activeRace = races.find(({ id: activityId }) => activityId === id)
-
-    const polyline = useRef(null)
-    const endMarker = useRef(null)
-    const startMarker = useRef(null)
+    const { path, distance, duration } = races.find(({ id: raceId }) => raceId === id)
 
     useEffect(() => {
-        if (!mapController || !activeRace || activeRace.path.length < 1) {
+        if (!mapController || !path.length) {
             return
         }
 
-        mapController.mapInstance.setCenter(activeRace.path[0])
-        startMarker.current = mapController.drawStartPosition(activeRace.path[0])
-        endMarker.current = mapController.drawEndPosition(activeRace.path[activeRace.path.length - 1])
-        polyline.current = mapController.drawPolyline(activeRace.path)
-
-        return () => {
-            if (polyline.current) {
-                polyline.current.destroy()
-                polyline.current = null
-            }
-
-            if (endMarker.current) {
-                endMarker.current.destroy()
-                endMarker.current = null
-            }
-
-            if (startMarker.current) {
-                startMarker.current.destroy()
-                startMarker.current = null
-            }
-        }
-    }, [mapController, activeRace])
+        requestAnimationFrame(() => {
+            mapController.drawPath(path)
+            mapController.centerMap(path[path.length - 1])
+        })
+    }, [mapController, path])
 
     const actions = useMemo(() => action ? action.split(',') : [], [action])
 
@@ -68,12 +47,12 @@ export const Race: React.FC<IRunsProps> = (props) =>  {
                 <div className='clock_container'>
                     <InfoRow header='Дистанция'>
                         <Title level='1' weight='medium'>
-                            {formatDistance(activeRace.distance)} км.
+                            {formatDistance(distance)} км.
                         </Title>
                     </InfoRow>
                     <InfoRow header='Время'>
                         <Title level='1' weight='medium'>
-                            {formatDuration(activeRace.duration)}
+                            {formatDuration(duration)}
                         </Title>
                     </InfoRow>
                 </div>

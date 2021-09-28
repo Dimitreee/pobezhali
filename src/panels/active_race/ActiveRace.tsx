@@ -43,10 +43,6 @@ export const ActiveRace: React.FC<IRunsProps> = (props) =>  {
         pause: pauseTimer,
     } = useStopwatch({ autoStart: false });
 
-    const polyline = useRef(null)
-    const endMarker = useRef(null)
-    const startMarker = useRef(null)
-
     useEffect(() => {
         if (!mapController) {
             return
@@ -57,52 +53,24 @@ export const ActiveRace: React.FC<IRunsProps> = (props) =>  {
                 return
             }
 
-            mapController.mapInstance.setCenter(position)
-            startMarker.current = mapController.drawStartPosition(position)
+            mapController.centerMap(position)
         })
-
-        return () => {
-            if (startMarker.current) {
-                startMarker.current.destroy()
-                startMarker.current = null
-            }
-        }
     }, [mapController])
 
     useEffect(() => {
-        if (!mapController || !path.length || path.length < 1) {
+        if (!path.length) {
             return
         }
 
-        if (polyline.current) {
-            polyline.current.destroy()
-        }
-
-        polyline.current = mapController.drawPolyline(path)
-
-        if (endMarker.current) {
-            endMarker.current.destroy()
-        }
-
-        endMarker.current = mapController.drawEndPosition(path[path.length - 1])
-
-        return () => {
-            if (polyline.current) {
-                polyline.current.destroy()
-                polyline.current = null
-            }
-
-            if (endMarker.current) {
-                endMarker.current.destroy()
-                endMarker.current = null
-            }
-        }
-    }, [mapController, path])
-
-    useEffect(() => {
-        // TODO: Инкрементить дистанцию при добавлении одной точки в путь
         dispatch(updateDistance(getPathLength(path)))
-    }, [path])
+
+        if (!mapController) {
+            return
+        }
+
+        mapController.drawPath((path))
+        mapController.centerMap(path[path.length - 1])
+    }, [mapController, path])
 
     useEffect(() => {
         dispatch(updateDuration({ seconds, minutes, hours }))
@@ -139,12 +107,22 @@ export const ActiveRace: React.FC<IRunsProps> = (props) =>  {
         stopwatchOffset.setSeconds(stopwatchOffset.getSeconds() + seconds + (minutes * SECONDS_PER_MINUTE) + (hours * SECONDS_PER_HOUR))
         reset(stopwatchOffset)
 
-        pollCurrentPosition(updatePath, GEO_POLL_INTERVAL)
+        getCurrentPosition().then((position) => {
+            if (!position) {
+                return
+            }
+
+            dispatch(updateRacePath(position))
+            mapController.centerMap(position)
+
+            pollCurrentPosition(updatePath, GEO_POLL_INTERVAL)
+        })
     }
 
     return (
         <Panel id={props.id}>
             <PanelHeader left={<PanelHeaderBack label='Назад' onClick={() => {
+                stopPositionPolling()
                 dispatch(resetRace())
                 router.popPage()
             }}/>}/>

@@ -1,4 +1,5 @@
 import { load } from '@2gis/mapgl'
+import { CircleMarker, Polyline } from '@2gis/mapgl/types'
 import * as mapgl from '@2gis/mapgl/types'
 import { Map as MapInterface } from '@2gis/mapgl/types/map'
 
@@ -36,7 +37,49 @@ export class MapController {
         this.glApi = null
     }
 
-    public drawPolyline(path: Path) {
+    public drawPath(path: Path) {
+        if (!this.mapInstance || !this.glApi || !path.length) {
+            return
+        }
+
+        this.clear()
+
+        const startPosition = path[0]
+        this.startPosition = this.drawStartPosition(startPosition)
+
+        if (path.length > 1) {
+            this.endPosition = this.drawEndPosition(path[path.length - 1])
+
+            this.path = this.drawPolyline(path)
+        }
+    }
+
+    public centerMap(position: Position) {
+        if (!this.mapInstance) {
+            return
+        }
+
+        this.mapInstance.setCenter(position)
+    }
+
+    public clear() {
+        if (this.startPosition) {
+            this.startPosition.destroy()
+            this.startPosition = null
+        }
+
+        if (this.endPosition) {
+            this.endPosition.destroy()
+            this.startPosition = null
+        }
+
+        if (this.path) {
+            this.path.destroy()
+            this.startPosition = null
+        }
+    }
+
+    private drawPolyline(path: Path) {
         if (!this.mapInstance || !this.glApi) {
             return
         }
@@ -47,11 +90,11 @@ export class MapController {
         });
     }
 
-    public drawStartPosition(position: Position) {
+    private drawStartPosition(position: Position) {
         return this.drawCircleMarker(position, this.startMarkerConfig)
     }
 
-    public drawEndPosition(position: Position) {
+    private drawEndPosition(position: Position) {
         return this.drawCircleMarker(position, this.endMarkerConfig)
     }
 
@@ -91,6 +134,9 @@ export class MapController {
         width: 10,
         zIndex: 200,
     }
-
     private defaultZoom = 16
+
+    private startPosition?: CircleMarker
+    private endPosition?: CircleMarker
+    private path?: Polyline
 }

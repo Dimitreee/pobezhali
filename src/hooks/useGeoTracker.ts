@@ -37,6 +37,7 @@ export const useGeoTracker = (): IUserGeotrackerReturnType => {
     const getCurrentPosition = (): Promise<Position | void> => {
         return getGeoData().then(result => {
             if (result.available) {
+                console.log(result.long, result.lat)
                 return [result.long, result.lat]
             }
 
