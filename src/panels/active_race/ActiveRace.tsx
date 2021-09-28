@@ -116,8 +116,6 @@ export const ActiveRace: React.FC<IRunsProps> = (props) =>  {
         if (path.length > 1) {
             const lastPoint = path[path.length - 1]
 
-            console.log(position[0] === lastPoint[0] && position[1] === lastPoint[1], position, lastPoint)
-
             if (position[0] === lastPoint[0] && position[1] === lastPoint[1]) {
                 return
             }
@@ -131,7 +129,7 @@ export const ActiveRace: React.FC<IRunsProps> = (props) =>  {
         stopPolling()
     }
 
-    const enablePositionPolling = useCallback(() => {
+    const enablePositionPolling = () => {
         if (isPolling) {
             stopPositionPolling()
             return
@@ -142,7 +140,7 @@ export const ActiveRace: React.FC<IRunsProps> = (props) =>  {
         reset(stopwatchOffset)
 
         pollCurrentPosition(updatePath, GEO_POLL_INTERVAL)
-    }, [reset, hours, minutes, seconds])
+    }
 
     return (
         <Panel id={props.id}>
