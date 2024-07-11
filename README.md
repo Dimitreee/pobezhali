@@ -1,30 +1,29 @@
-## Побежали
+## Run Tracker
 
-Простой недоделаный трекер твоих пробежек,
-потрогать можно [тут](https://vk.com/app7959189), для тестового доступа написать по контактам в описании профиля
+A simple unfinished tracker for your runs,
+You can try it out [here](https://vk.com/app7959189). For test access, contact the information in the profile description.
 
-### Что умеет:
+### Features:
 
-1. Отслеживание и построение пройденного маршрута на карте в реальном времени.
-2. Сохранение и возможность посмотреть пройденные маршруты.
-3. Просмотр пройденных маршрутов своих друзей. (Без бекэнда не умеет)
-4. Шаринг пройденного маршрута в Истории ВКонтакте.
+1. Real-time tracking and mapping of your route.
+2. Saving and viewing completed routes.
+3. Viewing routes completed by your friends. (Doesn't work without backend)
+4. Sharing your completed route in VKontakte Stories.
 
-### Что не умеет:
-1. Подтягивать маршруты друзей
-2. Включать гео на андроиде
+### Limitations:
+1. Cannot pull friends' routes
+2. Cannot enable geo-location on Android
 
-#### Что использовал:
+#### Technologies used:
 1) https://vk.com/dev/vkbridge
 2) https://vkcom.github.io/VKUI/
 3) React
 4) TypeScript
-5) Роутер: https://github.com/HappySanta/router
+5) Router: https://github.com/HappySanta/router
 6) https://vk.com/dev/vk_tunnel
 7) https://vk.com/dev/vk_apps_hosting
 
-
-### Скриншоты:
+### Screenshots:
 
 [<img src="/screenshots/1.jpeg" width="240"/>](./screenshots/1.jpeg)
 [<img src="/screenshots/2.jpeg" width="240"/>](./screenshots/2.jpeg)
@@ -33,14 +32,14 @@
 [<img src="/screenshots/5.jpeg" width="240"/>](./screenshots/5.jpeg)
 [<img src="/screenshots/6.jpeg" width="240"/>](./screenshots/6.jpeg)
 
-### Как запустить ?
+### How to run?
 ```
 1) yarn
-3) yarn add vk-tunnel
-4) Зарегать свое приложение в вк, получить APP_ID
-5) создать .env добавив нужные переменные окружения (смотри в .env.example)
-6) yarn dev
-7) в этой же директории  vk-tunnel --insecure=1 --http-protocol=https --ws-protocol=wss --host=localhost --port=10888
-8) Урл от vk-tunnel указать в настройках аппа
-9) Открыть апп в бразуере/телефоне
+2) yarn add vk-tunnel
+3) Register your app on VK, get APP_ID
+4) Create a .env file and add the necessary environment variables (see .env.example)
+5) yarn dev
+6) In the same directory, run vk-tunnel --insecure=1 --http-protocol=https --ws-protocol=wss --host=localhost --port=10888
+7) Specify the URL from vk-tunnel in the app settings
+8) Open the app in the browser/phone
 ```
